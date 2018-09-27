@@ -163,11 +163,17 @@ def sort_ar(valdir):
     idx2ar_file = valdir+'/../sorted_idxar.p'
     print("SORT_AR")
     if os.path.isfile(idx2ar_file): return pickle.load(open(idx2ar_file, 'rb'))
+    print("LINE166")    
     print('Creating AR indexes. Please be patient this may take a couple minutes...')
+    print("LINE168")
     val_dataset = datasets.ImageFolder(valdir) # AS: TODO: use Image.open instead of looping through dataset
+    print("LINE170")
     sizes = [img[0].size for img in tqdm(val_dataset, total=len(val_dataset))]
+    print("LINE172")
     idx_ar = [(i, round(s[0]/s[1], 5)) for i,s in enumerate(sizes)]
+    print("LINE174")
     sorted_idxar = sorted(idx_ar, key=lambda x: x[1])
+    print("LINE176")
     pickle.dump(sorted_idxar, open(idx2ar_file, 'wb'))
     print('Done')
     return sorted_idxar
