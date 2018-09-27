@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
-import ncluster
+#import ncluster
 import os
 
 IMAGE_NAME = 'pytorch.imagenet.source.v7'
 INSTANCE_TYPE = 'p3.16xlarge'
 NUM_GPUS = 8
 
-ncluster.set_backend('aws')
+#ncluster.set_backend('aws')
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', type=str, default='imagenet',
                     help="name of the current run, used for machine naming and tensorboard visualization")
@@ -155,18 +155,18 @@ def format_params(arg):
 
 def main():
   supported_regions = ['us-west-2', 'us-east-1', 'us-east-2']
-  assert ncluster.get_region() in supported_regions, f"required AMI {IMAGE_NAME} has only been made available in regions {supported_regions}, but your current region is {ncluster.get_region()}"
+  #assert ncluster.get_region() in supported_regions, f"required AMI {IMAGE_NAME} has only been made available in regions {supported_regions}, but your current region is {ncluster.get_region()}"
   assert args.machines in schedules, f"{args.machines} not supported, only support {schedules.keys()}"
 
   os.environ['NCLUSTER_AWS_FAST_ROOTDISK'] = '1'  # use io2 disk on AWS
-  job = ncluster.make_job(name=args.name,
-                          run_name=f"{args.name}-{args.machines}",
-                          num_tasks=args.machines,
-                          image_name=IMAGE_NAME,
-                          instance_type=INSTANCE_TYPE,
-                          install_script=open('setup.sh').read())
-  job.upload('training')
-  job.run(f'source activate pytorch_source')
+  #job = ncluster.make_job(name=args.name,
+  #                        run_name=f"{args.name}-{args.machines}",
+  #                        num_tasks=args.machines,
+  #                        image_name=IMAGE_NAME,
+  #                        instance_type=INSTANCE_TYPE,
+  #                        install_script=open('setup.sh').read())
+  #job.upload('training')
+  #job.run(f'source activate pytorch_source')
 
   nccl_params = get_nccl_params(args.machines, NUM_GPUS)
 
@@ -174,7 +174,7 @@ def main():
   default_params = [
     '~/data/imagenet',
     '--fp16',
-    '--logdir', job.logdir,
+    '--logdir', '/usr/log',
     '--distributed',
     '--init-bn0',
     '--no-bn-wd',
@@ -185,13 +185,21 @@ def main():
   training_params = ' '.join(map(format_params, training_params))
 
   # TODO: simplify args processing, or give link to actual commands run
-  for i, task in enumerate(job.tasks):
-    dist_params = f'--nproc_per_node=8 --nnodes={args.machines} --node_rank={i} --master_addr={job.tasks[0].ip} --master_port={6006}'
+#   for i, task in enumerate(job.tasks):
+#     dist_params = f'--nproc_per_node=8 --nnodes={args.machines} --node_rank={i} --master_addr={job.tasks[0].ip} --master_port={6006}'
+#     cmd = f'{nccl_params} python -m torch.distributed.launch {dist_params} training/train_imagenet_nv.py {training_params}'
+#     task.run(f'echo {cmd} > {job.logdir}/task-{i}.cmd')  # save command-line
+#     task.run(cmd, async=True)
+  print(f'A: num:{args.machines}')
+  for i in range(0, args.machines):
+    dist_params = f'--nproc_per_node=8 --nnodes={args.machines} --node_rank={i} --master_addr=0.0.0.0 --master_port={6006}'
     cmd = f'{nccl_params} python -m torch.distributed.launch {dist_params} training/train_imagenet_nv.py {training_params}'
-    task.run(f'echo {cmd} > {job.logdir}/task-{i}.cmd')  # save command-line
-    task.run(cmd, async=True)
+    print(f'Cmd={cmd}')
+    #task.run(f'echo {cmd} > {job.logdir}/task-{i}.cmd')  # save command-line
+    #task.run(cmd, async=True)
 
-  print(f"Logging to {job.logdir}")
+
+#  print(f"Logging to {job.logdir}")
 
 
 if __name__ == '__main__':

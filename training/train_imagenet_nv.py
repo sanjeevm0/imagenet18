@@ -328,7 +328,7 @@ class DataManager():
         trndir = phase.get('trndir', '')
         valdir = phase.get('valdir', trndir)
         phase['trndir'] = args.data+trndir+'/train'
-        phase['valdir'] = args.data+valdir+'/validation'
+        phase['valdir'] = args.data+valdir+'/val'
 
     def preload_data(self, ep, sz, bs, trndir, valdir, **kwargs): # dummy ep var to prevent error
         if 'lr' in kwargs: del kwargs['lr'] # in case we mix schedule and data phases
