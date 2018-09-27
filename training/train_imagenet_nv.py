@@ -87,7 +87,7 @@ def main():
     tb.log('sizes/world', dist_utils.env_world_size())
 
     # need to index validation directory before we start counting the time
-    dataloader.sort_ar(args.data+'/validation')
+    dataloader.sort_ar(args.data+'/val')
     
     if args.distributed:
         log.console('Distributed initializing process group')
