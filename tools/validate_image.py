@@ -5,7 +5,11 @@ import argparse
 def validate(file):
     if file.lower().endswith(".jpeg") or file.lower().endswith(".jpg"):
         jpgfile = Image.open(file)
-        print("Name: {0}, Bits: {1}, Size: {2}, Format:{3}".format(file, jpgfile.bits, jpgfile.size, jpgfile.format))
+        try:
+            print("Name: {0}, Bits: {1}, Size: {2}, Format:{3}".format(file, jpgfile.bits, jpgfile.size, jpgfile.format))
+        except Exception as e:
+            print("Name: {0} has error".format(file))
+            print(e)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image directory')
