@@ -161,7 +161,7 @@ class CropArTfm(object):
 import os.path
 def sort_ar(valdir):
     idx2ar_file = valdir+'/../sorted_idxar.p'
-    print "SORT_AR"
+    print("SORT_AR")
     if os.path.isfile(idx2ar_file): return pickle.load(open(idx2ar_file, 'rb'))
     print('Creating AR indexes. Please be patient this may take a couple minutes...')
     val_dataset = datasets.ImageFolder(valdir) # AS: TODO: use Image.open instead of looping through dataset
