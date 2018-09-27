@@ -82,7 +82,7 @@ tb = TensorboardLogger(args.logdir, is_master=is_master)
 log = FileLogger(args.logdir, is_master=is_master, is_rank0=is_rank0)
 
 def main():
-    os.system('shutdown -c')  # cancel previous shutdown command
+    #os.system('shutdown -c')  # cancel previous shutdown command
     log.console(args)
     tb.log('sizes/world', dist_utils.env_world_size())
 
