@@ -14,26 +14,37 @@ def validate(file, args):
 def scale_to(x, ratio, newsize):
     return max(math.floor(x*ratio), newsize)
 
+def create_dir(file, args):
+    if file == args.dir:
+        outname = args.newpath
+    else:           
+        basename = file[len(args.dir)+1:]
+        outname = os.path.join(args.newpath, basename)
+    #print("F: {0}, D: {1}, O: {2}".format(file, args.dir, outname))
+    dirname = os.path.dirname(outname)
+    if dirname != "":
+        os.makedirs(dirname, exist_ok=True)
+    #print("D made")
+    return outname
+
 def resize(file, args):
     try:
-        basename = file[len(args.dir)+1:]
         im = Image.open(file).convert('RGB')
+        outname = create_dir(file, args)
         r, c = im.size
         ratio = args.newsize/min(r,c)
         sz = (scale_to(r, ratio, args.newsize), scale_to(c, ratio, args.newsize))
-        os.makedirs(args.newpath, exist_ok=True)
-        im.resize(sz, Image.LINEAR).save(os.path.join(args.newpath, basename))
+        im.resize(sz, Image.LINEAR).save(outname)
     except Exception as e:
-        print("Encounter error on resize file {0}".format(file))
+        print("Encounter error on resize file {0}, exception {1}".format(file, e))
 
 def save(file, args):
     try:
-        basename = file[len(args.dir)+1]
         im = Image.open(file).convert('RGB')
-        os.makedirs(args.newpath, exist_ok=True)
-        im.save(os.path.join(args.newpath, basename))
-    except:
-        print("Encounter error on save file {0}".format(file))
+        outname = create_dir(file, args)
+        im.save(outname)
+    except Exception as e:
+        print("Encounter error on save file {0}, exception {1}".format(file, e))
 
 def oper(file, args):
     if file.lower().endswith(".jpeg") or file.lower().endswith(".jpg"):
@@ -50,9 +61,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image directory')
     parser.add_argument('oper', help='the operation to perform <validate|resize|save>')
     parser.add_argument('--dir', '-d', action='store', help='path to dataset')
-    parser.add_argument('--size', '-s', action='store', help='the size to resize to')
+    parser.add_argument('--newsize', '-s', action='store', help='the size to resize to')
     parser.add_argument('--newpath', '-n', action='store', help='the new path for saved file')
     args = parser.parse_args()
+    if args.newsize is not None:
+        args.newsize = int(args.newsize)
     if args.dir.endswith('/'):
         args.dir = args.dir[:-1]
     if os.path.isdir(args.dir):
