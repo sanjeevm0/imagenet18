@@ -322,6 +322,7 @@ class DataManager():
             if not phase.get('keep_dl', False):
                 self.expand_directories(phase)
                 phase['data'] = self.preload_data(**phase)
+        exit()
         return phases
 
     def expand_directories(self, phase):
@@ -331,6 +332,7 @@ class DataManager():
         phase['valdir'] = args.data+valdir+'/val'
 
     def preload_data(self, ep, sz, bs, trndir, valdir, **kwargs): # dummy ep var to prevent error
+        print("Ep: {0}, Sz: {1}, Bs: {2}, Trndir: {3}, Valdir: {4}, Rem: {5}".format(ep, sz, bs, trndir, valdir, kwargs))
         if 'lr' in kwargs: del kwargs['lr'] # in case we mix schedule and data phases
         """Pre-initializes data-loaders. Use set_data to start using it."""
         if sz == 128: val_bs = max(bs, 512)
