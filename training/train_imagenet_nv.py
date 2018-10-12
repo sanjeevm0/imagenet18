@@ -322,7 +322,7 @@ class DataManager():
             if not phase.get('keep_dl', False):
                 self.expand_directories(phase)
                 phase['data'] = self.preload_data(**phase)
-+           print("Phase: {0}".format(phase))
+            print("Phase: {0}".format(phase))
         return phases
 
     def expand_directories(self, phase):

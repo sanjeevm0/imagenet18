@@ -35,6 +35,18 @@ one_machine = [
   {'ep':(33,35),'lr':lr/1000*scale_288}
 ]
 
+lr = 1.5
+two_machines = [
+    {'ep':0, 'sz':128, 'bs':512, 'trndir':'-sz/160'},
+    {'ep':(0,5), 'lr':(lr,lr*2)},
+    {'ep':5, 'lr':lr},
+    {'ep':14, 'sz':224, 'bs':200, 'lr':lr*200/512},
+    {'ep':16, 'lr':lr/10*200/512},
+    {'ep':27, 'lr':lr/100*200/512},
+    {'ep':32, 'sz':288, 'bs':118, 'min_scale':0.5, 'rect_val':True, 'lr':lr/100*118/512},
+    {'ep':(33,35), 'lr':lr/1000*118/512}
+]
+
 # 29:44 to 93.05
 # events: https://s3.amazonaws.com/yaroslavvb/logs/imagenet-4
 # logs: https://s3.amazonaws.com/yaroslavvb/logs/imagenet-4.tar
@@ -97,6 +109,7 @@ sixteen_machines = [
 ]
   
 schedules = {1: one_machine,
+             2: two_machines,
              4: four_machines,
              8: eight_machines,
              16: sixteen_machines}
@@ -194,7 +207,7 @@ def main():
   for i in range(0, args.machines):
     dist_params = f'--nproc_per_node=8 --nnodes={args.machines} --node_rank={i} --master_addr=0.0.0.0 --master_port={6006}'
     cmd = f'{nccl_params} python -m torch.distributed.launch {dist_params} training/train_imagenet_nv.py {training_params}'
-    print(f'Cmd={cmd}')
+    print(f'Cmd={cmd}\n')
     #task.run(f'echo {cmd} > {job.logdir}/task-{i}.cmd')  # save command-line
     #task.run(cmd, async=True)
 
