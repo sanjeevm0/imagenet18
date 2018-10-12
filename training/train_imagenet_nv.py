@@ -443,6 +443,7 @@ if __name__ == '__main__':
         import traceback
         traceback.print_tb(exc_traceback, file=sys.stdout)
         log.event(e)
+        print("Encounter Exception: {0}".format(e))
         # in case of exception, wait 2 hours before shutting down
         #if not args.skip_auto_shutdown: os.system(f'sudo shutdown -h -P +{args.auto_shutdown_failure_delay_mins}')
     tb.close()
