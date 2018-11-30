@@ -7,7 +7,7 @@ def validate(file, args):
     jpgfile = Image.open(file)
     try:
         print("Name: {0}, Bits: {1}, Size: {2}, Format:{3}".format(file, jpgfile.bits, jpgfile.size, jpgfile.format))
-    except Exception as e:
+    except BaseException as e:
         print("Name: {0} has error".format(file))
         print(e)
 
