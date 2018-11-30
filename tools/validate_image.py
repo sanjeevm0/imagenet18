@@ -10,6 +10,9 @@ def validate(file, args):
     except BaseException as e:
         print("Name: {0} has error".format(file))
         print(e)
+    except OSError as e:
+        print("Name: {0} has error".format(file))
+        print(e)
 
 def scale_to(x, ratio, newsize):
     return max(math.floor(x*ratio), newsize)
