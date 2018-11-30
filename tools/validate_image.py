@@ -4,13 +4,10 @@ import argparse
 import math
 
 def validate(file, args):
-    jpgfile = Image.open(file)
     try:
+        jpgfile = Image.open(file)
         print("Name: {0}, Bits: {1}, Size: {2}, Format:{3}".format(file, jpgfile.bits, jpgfile.size, jpgfile.format))
     except BaseException as e:
-        print("Name: {0} has error".format(file))
-        print(e)
-    except OSError as e:
         print("Name: {0} has error".format(file))
         print(e)
 
